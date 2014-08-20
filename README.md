@@ -36,3 +36,5 @@ Installation:
 ```
 npm install webpage-preview
 ```
+
+Please follow https://github.com/hacksparrow/node-easyimage install guide
