@@ -4,6 +4,7 @@ var path        = require('path'),
     phantom     = require('phantom'),
     easyimg     = require('easyimage'),
     async       = require('async'),
+    changeCase  = require('change-case'),
     freeport    = require('freeport'),
     mkdirp      = require('mkdirp');
 
@@ -122,13 +123,16 @@ exports.generatePreview = function(url, name, parentPath, viewportSize, outputSi
 
     console.log('generatePreview: resize: Thumbnail generating... ', thumbFile);
 
-    easyimg.crop({ src: outputFile, dst: thumbFile, cropwidth: viewportSize.width, cropheight: viewportSize.height, x: 0, y: 0, gravity: 'North' }, function() {
-      console.log('generatePreview: resize: Thumbnail generated =', thumbFile);
-
-      easyimg.resize({ src: thumbFile, dst: thumbFile, width: width, height: height }, function() {
-        save(sizeName, thumbFile, callback);
+    easyimg.crop({ src: outputFile, dst: thumbFile, cropwidth: viewportSize.width, cropheight: viewportSize.height, x: 0, y: 0, gravity: 'North' })
+      .then(function(file){
+        console.log('generatePreview: resize: Thumbnail generated =', thumbFile);
+        easyimg.resize({ src: thumbFile, dst: thumbFile, width: width, height: height })
+        .then( function(resizeFile) {
+          save(sizeName, resizeFile, callback);
+        });
+      }, function (err) {
+        console.log(err);
       });
-    });
   }
 
   // Save each thumbnail to disk
